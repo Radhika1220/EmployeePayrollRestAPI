@@ -70,7 +70,10 @@ namespace PayrollRestAPITest
             Assert.AreEqual("Vishnu Priya", res.name);
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
-        //add data to json server
+       /// <summary>
+       /// UC3-->Adding the mutiple data in json server
+       /// </summary>
+       /// <param name="jsonObject"></param>
         public void AddingInJsonServer(JsonObject jsonObject)
         {
             RestRequest request = new RestRequest("/employees", Method.POST);
@@ -78,11 +81,15 @@ namespace PayrollRestAPITest
             IRestResponse response = client.Execute(request);
 
         }
+        /// <summary>
+        /// UC3-->TestMethod
+        /// </summary>
         [TestMethod]
         public void OnCallingPostAPI_Adding_MultipleData()
         {
+            //Creating a list for adding multiple data in list
             List<JsonObject> jsonList = new List<JsonObject>();
-
+            //Adding the details
             JsonObject jsonObject = new JsonObject();
             jsonObject.Add("name", "Subhiksha");
             jsonObject.Add("Salary", 55000);
@@ -91,17 +98,35 @@ namespace PayrollRestAPITest
             JsonObject jsonObject1 = new JsonObject();
             jsonObject1.Add("name", "Kishore");
             jsonObject1.Add("salary", 60000);
-         
             jsonList.Add(jsonObject1);
-          foreach(var i in jsonList)
+            //Adding the details in json server
+           foreach(var i in jsonList)
             {
                 AddingInJsonServer(i);
             }
-
+           //getting the respnse from getallemployee method
             IRestResponse response = GetAllEmployees();
-
             var res = JsonConvert.DeserializeObject<List<Employee>>(response.Content);
-     
+            //checkin the status code
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [TestMethod]
+        public void OnCallingPutAPI_UpdateEmployeeDetails()
+        {
+            //Passing the method type as put(update existing employee details)
+            RestRequest request = new RestRequest("/employees/5", Method.PUT);
+            //Creating a object
+            JsonObject json = new JsonObject();
+            //Adding the details
+            json.Add("name", "Praveena");
+            json.Add("salary", 40000);
+            //passing the type as json 
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            //convert the jsonobject to employee object
+            var res = JsonConvert.DeserializeObject<Employee>(response.Content);
+           
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
     }
