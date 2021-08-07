@@ -35,12 +35,12 @@ namespace PayrollRestAPITest
         /// Testmethod to pass the test case
         /// </summary>
         [TestMethod]
-        public void OnCallingRestAPI_ReturnEmployees()
+        public void OnCallingGetAPI_ReturnEmployees()
         {
             IRestResponse response = GetAllEmployees();
             //Convert the json object to list(deserialize)
             var res = JsonConvert.DeserializeObject<List<Employee>>(response.Content);
-            Assert.AreEqual(4, res.Count);
+            Assert.AreEqual(6, res.Count);
             //Check the status code 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             //printing the data in console
@@ -48,6 +48,27 @@ namespace PayrollRestAPITest
             {
                 Console.WriteLine("Id: {0}\t Name: {1}\t Salary :{2} ", i.id, i.name, i.salary);
             }
+        }
+        /// <summary>
+        /// UC2--->Adding a employee in json server
+        /// </summary>
+        [TestMethod]
+        public void OnCallingPostAPI_ReturnEmployee()
+        {
+            //Passing the method type as post(add details)
+            RestRequest request = new RestRequest("/employees", Method.POST);
+            //Creating a object
+            JsonObject json = new JsonObject();
+            //Adding the details
+            json.Add("name", "Vishnu Priya");
+            json.Add("salary", 78000);
+            //passing the type as json 
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            //convert the jsonobject to employee object
+            var res = JsonConvert.DeserializeObject<Employee>(response.Content);
+            Assert.AreEqual("Vishnu Priya", res.name);
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
     }
 }
