@@ -40,7 +40,7 @@ namespace PayrollRestAPITest
             IRestResponse response = GetAllEmployees();
             //Convert the json object to list(deserialize)
             var res = JsonConvert.DeserializeObject<List<Employee>>(response.Content);
-            Assert.AreEqual(6, res.Count);
+            Assert.AreEqual(8, res.Count);
             //Check the status code 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             //printing the data in console
@@ -110,7 +110,9 @@ namespace PayrollRestAPITest
             //checkin the status code
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
-
+        /// <summary>
+        /// UC4--Update theexisting employee details (PUT METHOD)
+        /// </summary>
         [TestMethod]
         public void OnCallingPutAPI_UpdateEmployeeDetails()
         {
@@ -125,9 +127,24 @@ namespace PayrollRestAPITest
             request.AddParameter("application/json", json, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             //convert the jsonobject to employee object
-            var res = JsonConvert.DeserializeObject<Employee>(response.Content);
-           
+            var res = JsonConvert.DeserializeObject<Employee>(response.Content);          
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
-    }
+        /// <summary>
+        /// UC5--->Delete the employee details using the id
+        /// </summary>
+
+        [TestMethod]
+        public void OnCallingDeleteAPI_DeleteEmployeeDetails()
+        {
+            //Passing the method type as put(update existing employee details)
+         
+                RestRequest request = new RestRequest("/employees/16", Method.DELETE);
+                IRestResponse response = client.Execute(request);
+                //check count after deletion
+              IRestResponse response1 = GetAllEmployees();
+                List<Employee> result = JsonConvert.DeserializeObject<List<Employee>>(response1.Content);
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            }
+        }
 }
